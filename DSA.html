@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shahid – DSA Tracker</title>
+<style>
+:root {
+  --color-background-primary: #0f1117;
+  --color-background-secondary: #1e2130;
+  --color-background-tertiary: #2d3148;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #64748b;
+  --color-text-success: #4ade80;
+  --color-background-success: rgba(74, 222, 128, 0.1);
+  --color-text-warning: #fbbf24;
+  --color-background-warning: rgba(251, 191, 36, 0.1);
+  --color-text-danger: #f87171;
+  --color-background-danger: rgba(248, 113, 113, 0.1);
+  --color-text-info: #7dd3fc;
+  --color-background-info: rgba(125, 211, 252, 0.1);
+  --color-border-info: #0ea5e9;
+  --color-border-secondary: #334155;
+  --color-border-tertiary: #2d3148;
+  --border-radius-md: 8px;
+}
+
+body { 
+  background: var(--color-background-primary); 
+  color: var(--color-text-primary); 
+  font-family: 'Segoe UI', system-ui, sans-serif; 
+  padding: 2rem 1.5rem; 
+  min-height: 100vh;
+  margin: 0;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+.wrap{padding:1rem 0; max-width: 900px; margin: 0 auto;}
+
+.top-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:1.25rem}
+.top-bar input{flex:1;min-width:140px;font-size:13px; background: var(--color-background-secondary); border: 1px solid var(--color-border-secondary); color: var(--color-text-primary); padding: 8px 12px; border-radius: 6px; outline: none; }
+.top-bar input:focus{ border-color: var(--color-border-info); }
+.top-bar select{font-size:13px; background: var(--color-background-secondary); border: 1px solid var(--color-border-secondary); color: var(--color-text-primary); padding: 8px 12px; border-radius: 6px; outline: none; }
+
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1.25rem}
+.sc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px; border: 1px solid var(--color-border-tertiary); }
+.sc-label{font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.sc-val{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.sc-val.done{color:var(--color-text-success)}
+
+.prog-wrap{margin-bottom:1.5rem}
+.prog-bg{height:6px;background:var(--color-background-tertiary);border-radius:20px;overflow:hidden}
+.prog-fill{height:6px;background: var(--color-text-success);border-radius:20px;transition:width .4s}
+.prog-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px;display:flex;justify-content:space-between}
+
+.section-head{font-size:13px;font-weight:500;color:var(--color-text-secondary);padding:6px 0;margin-bottom:6px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.section-head .arrow{font-size:11px;transition:transform .2s}
+.section-head.collapsed .arrow{transform:rotate(-90deg)}
+
+.problem-list{display:flex;flex-direction:column;gap:4px;margin-bottom:1rem}
+.problem-list.collapsed{display:none}
+
+.row{display:grid;grid-template-columns:28px 1fr auto auto;gap:8px;align-items:center;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;transition:border-color .15s}
+.row:hover{border-color:var(--color-border-secondary)}
+.row.done-row{opacity:.55}
+
+.check{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--color-border-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.check.checked{background:var(--color-text-success);border-color:var(--color-text-success)}
+.check-mark{display:none;width:10px;height:10px}
+.check.checked .check-mark{display:block}
+
+.pname{font-size:13px;color:var(--color-text-primary);cursor:pointer;line-height:1.4}
+.pname:hover{color:var(--color-text-info)}
+.row.done-row .pname{text-decoration:line-through;color:var(--color-text-tertiary)}
+
+.diff{font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.easy{background:var(--color-background-success);color:var(--color-text-success)}
+.medium{background:var(--color-background-warning);color:var(--color-text-warning)}
+.hard{background:var(--color-background-danger);color:var(--color-text-danger)}
+
+.topic-badge{font-size:10px;color:var(--color-text-tertiary);white-space:nowrap;display:none}
+.hidden{display:none!important}
+
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
+.fbtn{font-size:11px;padding:4px 10px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.fbtn.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+
+.note-hint{font-size:11px;color:var(--color-text-tertiary);margin-top:1rem;text-align:center}
+
+button { font-size: 11px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); cursor: pointer; transition: all 0.15s; }
+button:hover { background: var(--color-background-tertiary); border-color: var(--color-text-info); }
+
+h1 { font-size: 1.5rem; font-weight: 600; color: var(--color-text-primary); margin-bottom: 0.5rem; }
+.subtitle { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 2rem; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+    <h1>DSA Tracker</h1>
+    <p class="subtitle">50 curated problems to master data structures and algorithms</p>
+
+    <div class="top-bar">
+        <input type="text" id="srch" placeholder="Search problem..." oninput="applyFilters()">
+        <select id="diff-filter" onchange="applyFilters()">
+            <option value="">All difficulties</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+        </select>
+    </div>
+
+    <div class="filter-row" id="topic-filters"></div>
+
+    <div class="stats-row">
+        <div class="sc">
+            <div class="sc-label">Total</div>
+            <div class="sc-val" id="s-total">50</div>
+        </div>
+        <div class="sc">
+            <div class="sc-label">Solved</div>
+            <div class="sc-val done" id="s-done">0</div>
+        </div>
+        <div class="sc">
+            <div class="sc-label">Easy</div>
+            <div class="sc-val" id="s-easy">17</div>
+        </div>
+        <div class="sc">
+            <div class="sc-label">Medium</div>
+            <div class="sc-val" id="s-med">24</div>
+        </div>
+        <div class="sc">
+            <div class="sc-label">Hard</div>
+            <div class="sc-val" id="s-hard">9</div>
+        </div>
+    </div>
+
+    <div class="prog-wrap">
+        <div class="prog-label"><span>Progress</span><span id="prog-pct">0 / 50</span></div>
+        <div class="prog-bg">
+            <div class="prog-fill" id="prog-bar" style="width:0%"></div>
+        </div>
+    </div>
+
+    <div id="problems-container"></div>
+
+    <div class="note-hint">Tick a problem to mark it solved. Progress resets on refresh — use this as a daily checklist.</div>
+
+    <div style="margin-top:1.5rem;display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="sendPrompt('Explain the two pointers technique with examples for interview')">Two pointers explained ↗</button>
+        <button onclick="sendPrompt('Give me a Node.js solution for Two Sum with explanation')">Node.js solution for Two Sum ↗</button>
+        <button onclick="sendPrompt('What are the most common DSA patterns asked in Indian startup interviews?')">Common interview patterns ↗</button>
+    </div>
+</div>
+
+<script>
+    var problems = [
+        { id: 1, name: "Two Sum", topic: "Arrays", diff: "Easy", lc: "https://leetcode.com/problems/two-sum/" },
+        { id: 2, name: "Best time to buy and sell stock", topic: "Arrays", diff: "Easy", lc: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" },
+        { id: 3, name: "Contains duplicate", topic: "Arrays", diff: "Easy", lc: "https://leetcode.com/problems/contains-duplicate/" },
+        { id: 4, name: "Product of array except self", topic: "Arrays", diff: "Medium", lc: "https://leetcode.com/problems/product-of-array-except-self/" },
+        { id: 5, name: "Maximum subarray (Kadane's)", topic: "Arrays", diff: "Medium", lc: "https://leetcode.com/problems/maximum-subarray/" },
+        { id: 6, name: "3Sum", topic: "Arrays", diff: "Medium", lc: "https://leetcode.com/problems/3sum/" },
+        { id: 7, name: "Merge intervals", topic: "Arrays", diff: "Medium", lc: "https://leetcode.com/problems/merge-intervals/" },
+        { id: 8, name: "Rotate array", topic: "Arrays", diff: "Medium", lc: "https://leetcode.com/problems/rotate-array/" },
+        { id: 9, name: "Valid anagram", topic: "Strings", diff: "Easy", lc: "https://leetcode.com/problems/valid-anagram/" },
+        { id: 10, name: "Valid parentheses", topic: "Strings", diff: "Easy", lc: "https://leetcode.com/problems/valid-parentheses/" },
+        { id: 11, name: "Longest substring without repeating chars", topic: "Strings", diff: "Medium", lc: "https://leetcode.com/problems/longest-substring-without-repeating-characters/" },
+        { id: 12, name: "Group anagrams", topic: "Strings", diff: "Medium", lc: "https://leetcode.com/problems/group-anagrams/" },
+        { id: 13, name: "Longest palindromic substring", topic: "Strings", diff: "Medium", lc: "https://leetcode.com/problems/longest-palindromic-substring/" },
+        { id: 14, name: "Minimum window substring", topic: "Strings", diff: "Hard", lc: "https://leetcode.com/problems/minimum-window-substring/" },
+        { id: 15, name: "Reverse linked list", topic: "Linked List", diff: "Easy", lc: "https://leetcode.com/problems/reverse-linked-list/" },
+        { id: 16, name: "Merge two sorted lists", topic: "Linked List", diff: "Easy", lc: "https://leetcode.com/problems/merge-two-sorted-lists/" },
+        { id: 17, name: "Linked list cycle detection", topic: "Linked List", diff: "Easy", lc: "https://leetcode.com/problems/linked-list-cycle/" },
+        { id: 18, name: "Remove Nth node from end of list", topic: "Linked List", diff: "Medium", lc: "https://leetcode.com/problems/remove-nth-node-from-end-of-list/" },
+        { id: 19, name: "LRU Cache", topic: "Linked List", diff: "Medium", lc: "https://leetcode.com/problems/lru-cache/" },
+        { id: 20, name: "Invert binary tree", topic: "Trees", diff: "Easy", lc: "https://leetcode.com/problems/invert-binary-tree/" },
+        { id: 21, name: "Maximum depth of binary tree", topic: "Trees", diff: "Easy", lc: "https://leetcode.com/problems/maximum-depth-of-binary-tree/" },
+        { id: 22, name: "Same tree", topic: "Trees", diff: "Easy", lc: "https://leetcode.com/problems/same-tree/" },
+        { id: 23, name: "Lowest common ancestor of BST", topic: "Trees", diff: "Medium", lc: "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/" },
+        { id: 24, name: "Binary tree level order traversal", topic: "Trees", diff: "Medium", lc: "https://leetcode.com/problems/binary-tree-level-order-traversal/" },
+        { id: 25, name: "Validate binary search tree", topic: "Trees", diff: "Medium", lc: "https://leetcode.com/problems/validate-binary-search-tree/" },
+        { id: 26, name: "Construct BST from preorder traversal", topic: "Trees", diff: "Medium", lc: "https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/" },
+        { id: 27, name: "Binary tree maximum path sum", topic: "Trees", diff: "Hard", lc: "https://leetcode.com/problems/binary-tree-maximum-path-sum/" },
+        { id: 28, name: "Climbing stairs", topic: "Dynamic Programming", diff: "Easy", lc: "https://leetcode.com/problems/climbing-stairs/" },
+        { id: 29, name: "House robber", topic: "Dynamic Programming", diff: "Medium", lc: "https://leetcode.com/problems/house-robber/" },
+        { id: 30, name: "Coin change", topic: "Dynamic Programming", diff: "Medium", lc: "https://leetcode.com/problems/coin-change/" },
+        { id: 31, name: "Longest increasing subsequence", topic: "Dynamic Programming", diff: "Medium", lc: "https://leetcode.com/problems/longest-increasing-subsequence/" },
+        { id: 32, name: "0/1 Knapsack problem", topic: "Dynamic Programming", diff: "Medium", lc: "https://leetcode.com/problems/partition-equal-subset-sum/" },
+        { id: 33, name: "Word break", topic: "Dynamic Programming", diff: "Medium", lc: "https://leetcode.com/problems/word-break/" },
+        { id: 34, name: "Edit distance", topic: "Dynamic Programming", diff: "Hard", lc: "https://leetcode.com/problems/edit-distance/" },
+        { id: 35, name: "Burst balloons", topic: "Dynamic Programming", diff: "Hard", lc: "https://leetcode.com/problems/burst-balloons/" },
+        { id: 36, name: "Number of islands", topic: "Graphs", diff: "Medium", lc: "https://leetcode.com/problems/number-of-islands/" },
+        { id: 37, name: "Clone graph", topic: "Graphs", diff: "Medium", lc: "https://leetcode.com/problems/clone-graph/" },
+        { id: 38, name: "Pacific atlantic water flow", topic: "Graphs", diff: "Medium", lc: "https://leetcode.com/problems/pacific-atlantic-water-flow/" },
+        { id: 39, name: "Course schedule (topological sort)", topic: "Graphs", diff: "Medium", lc: "https://leetcode.com/problems/course-schedule/" },
+        { id: 40, name: "Shortest path in binary matrix", topic: "Graphs", diff: "Medium", lc: "https://leetcode.com/problems/shortest-path-in-binary-matrix/" },
+        { id: 41, name: "Min stack", topic: "Stack & Queue", diff: "Easy", lc: "https://leetcode.com/problems/min-stack/" },
+        { id: 42, name: "Implement queue using stacks", topic: "Stack & Queue", diff: "Easy", lc: "https://leetcode.com/problems/implement-queue-using-stacks/" },
+        { id: 43, name: "Daily temperatures", topic: "Stack & Queue", diff: "Medium", lc: "https://leetcode.com/problems/daily-temperatures/" },
+        { id: 44, name: "Largest rectangle in histogram", topic: "Stack & Queue", diff: "Hard", lc: "https://leetcode.com/problems/largest-rectangle-in-histogram/" },
+        { id: 45, name: "Sliding window maximum", topic: "Stack & Queue", diff: "Hard", lc: "https://leetcode.com/problems/sliding-window-maximum/" },
+        { id: 46, name: "Maximum average subarray I", topic: "Sliding Window", diff: "Easy", lc: "https://leetcode.com/problems/maximum-average-subarray-i/" },
+        { id: 47, name: "Longest repeating char replacement", topic: "Sliding Window", diff: "Medium", lc: "https://leetcode.com/problems/longest-repeating-character-replacement/" },
+        { id: 48, name: "Permutation in string", topic: "Sliding Window", diff: "Medium", lc: "https://leetcode.com/problems/permutation-in-string/" },
+        { id: 49, name: "Container with most water", topic: "Two Pointers", diff: "Medium", lc: "https://leetcode.com/problems/container-with-most-water/" },
+        { id: 50, name: "Trapping rain water", topic: "Two Pointers", diff: "Hard", lc: "https://leetcode.com/problems/trapping-rain-water/" },
+    ];
+
+    var solved = {};
+    var activeTopicFilter = '';
+
+    function getTopics() {
+        var t = {};
+        problems.forEach(function (p) { t[p.topic] = true; });
+        return Object.keys(t);
+    }
+
+    function buildTopicFilters() {
+        var topics = getTopics();
+        var el = document.getElementById('topic-filters');
+        var html = '<button class="fbtn active" onclick="setTopic(\'\',this)">All topics</button>';
+        topics.forEach(function (t) {
+            html += '<button class="fbtn" onclick="setTopic(\'' + t + '\',this)">' + t + '</button>';
+        });
+        el.innerHTML = html;
+    }
+
+    function setTopic(t, btn) {
+        activeTopicFilter = t;
+        document.querySelectorAll('.fbtn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        applyFilters();
+    }
+
+    function applyFilters() {
+        var q = document.getElementById('srch').value.toLowerCase();
+        var df = document.getElementById('diff-filter').value;
+        document.querySelectorAll('.row').forEach(function (row) {
+            var name = row.dataset.name.toLowerCase();
+            var diff = row.dataset.diff;
+            var topic = row.dataset.topic;
+            var show = true;
+            if (q && !name.includes(q)) show = false;
+            if (df && diff !== df) show = false;
+            if (activeTopicFilter && topic !== activeTopicFilter) show = false;
+            row.classList.toggle('hidden', !show);
+        });
+        updateSectionVisibility();
+    }
+
+    function updateSectionVisibility() {
+        document.querySelectorAll('[data-section]').forEach(function (sec) {
+            var topic = sec.dataset.section;
+            var list = document.getElementById('list-' + topic.replace(/[^a-z]/gi, ''));
+            if (!list) return;
+            var hasVisible = Array.from(list.querySelectorAll('.row')).some(function (r) { return !r.classList.contains('hidden'); });
+            sec.style.display = hasVisible ? '' : 'none';
+            list.style.display = hasVisible && !sec.classList.contains('collapsed') ? '' : 'none';
+        });
+    }
+
+    function buildProblems() {
+        var topics = getTopics();
+        var container = document.getElementById('problems-container');
+        var html = '';
+        topics.forEach(function (topic) {
+            var tid = topic.replace(/[^a-z]/gi, '');
+            var ps = problems.filter(function (p) { return p.topic === topic; });
+            var ec = 0, mc = 0, hc = 0;
+            ps.forEach(function (p) { if (p.diff === 'Easy') ec++; else if (p.diff === 'Medium') mc++; else hc++; });
+            html += '<div data-section="' + topic + '">';
+            html += '<div class="section-head" id="head-' + tid + '" onclick="toggleSection(\'' + tid + '\')"><span class="arrow">&#9660;</span><span style="flex:1">' + topic + '</span>';
+            html += '<span style="font-size:11px;color:var(--color-text-tertiary);display:flex;gap:6px">';
+            if (ec) html += '<span style="color:var(--color-text-success)">' + ec + ' easy</span>';
+            if (mc) html += '<span style="color:var(--color-text-warning)">' + mc + ' med</span>';
+            if (hc) html += '<span style="color:var(--color-text-danger)">' + hc + ' hard</span>';
+            html += '</span></div>';
+            html += '<div class="problem-list" id="list-' + tid + '">';
+            ps.forEach(function (p) {
+                html += '<div class="row" data-id="' + p.id + '" data-name="' + p.name.toLowerCase() + '" data-diff="' + p.diff + '" data-topic="' + p.topic + '">';
+                html += '<div class="check" id="chk-' + p.id + '" onclick="toggle(' + p.id + ')"><svg class="check-mark" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="var(--color-text-success)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+                html += '<a class="pname" href="' + p.lc + '" style="text-decoration:none" target="_blank">' + p.name + '</a>';
+                html += '<span class="diff ' + p.diff.toLowerCase() + '">' + p.diff + '</span>';
+                html += '</div>';
+            });
+            html += '</div></div>';
+        });
+        container.innerHTML = html;
+    }
+
+    function toggleSection(tid) {
+        var head = document.getElementById('head-' + tid);
+        var list = document.getElementById('list-' + tid);
+        head.classList.toggle('collapsed');
+        list.style.display = head.classList.contains('collapsed') ? 'none' : '';
+    }
+
+    function toggle(id) {
+        solved[id] = !solved[id];
+        var row = document.querySelector('.row[data-id="' + id + '"]');
+        var chk = document.getElementById('chk-' + id);
+        row.classList.toggle('done-row', !!solved[id]);
+        chk.classList.toggle('checked', !!solved[id]);
+        updateStats();
+    }
+
+    function updateStats() {
+        var cnt = Object.values(solved).filter(Boolean).length;
+        document.getElementById('s-done').textContent = cnt;
+        document.getElementById('prog-pct').textContent = cnt + ' / 50';
+        document.getElementById('prog-bar').style.width = Math.round(cnt / 50 * 100) + '%';
+    }
+
+    buildTopicFilters();
+    buildProblems();
+    updateStats();
+</script>
+</body>
+</html>

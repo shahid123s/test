@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shahid – Job Target Companies (8+ LPA)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; padding: 2rem 1.5rem; }
+  h1 { font-size: 1.5rem; font-weight: 600; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 1.5rem; }
+  .profile-bar { background: #1e2130; border: 1px solid #2d3148; border-radius: 12px; padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.5rem; align-items: center; }
+  .profile-bar .name { font-weight: 600; font-size: 15px; color: #e2e8f0; }
+  .profile-bar .role { font-size: 12px; color: #64748b; }
+  .skill-pill { background: #1e293b; border: 1px solid #334155; color: #7dd3fc; font-size: 11px; padding: 3px 10px; border-radius: 20px; }
+  .skill-pill.hot { background: #1a1f35; border-color: #4f46e5; color: #a5b4fc; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .stat { background: #1e2130; border: 1px solid #2d3148; border-radius: 10px; padding: 12px 14px; }
+  .stat-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .stat-value { font-size: 22px; font-weight: 600; color: #f1f5f9; }
+  .stat-value.green { color: #4ade80; }
+  .filters { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .filter-btn { padding: 5px 14px; border-radius: 20px; border: 1px solid #2d3148; background: #1e2130; color: #94a3b8; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+  .filter-btn.active { background: #312e81; border-color: #4f46e5; color: #a5b4fc; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .card { background: #1e2130; border: 1px solid #2d3148; border-radius: 12px; padding: 16px 18px; transition: border-color 0.15s; position: relative; }
+  .card:hover { border-color: #4f46e5; }
+  .card.top-match { border-color: #4ade80; }
+  .card.top-match::before { content: '⭐ Top Match'; position: absolute; top: -1px; right: 14px; background: #14532d; color: #4ade80; font-size: 10px; padding: 2px 8px; border-radius: 0 0 6px 6px; font-weight: 600; letter-spacing: 0.04em; }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .company-name { font-size: 15px; font-weight: 600; color: #f1f5f9; }
+  .sector-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; white-space: nowrap; font-weight: 500; }
+  .b-saas { background: #1e3a5f; color: #7dd3fc; }
+  .b-fintech { background: #14301a; color: #4ade80; }
+  .b-edtech { background: #451a03; color: #fdba74; }
+  .b-ecomm { background: #4a044e; color: #f0abfc; }
+  .b-health { background: #064e3b; color: #6ee7b7; }
+  .b-ai { background: #312e81; color: #a5b4fc; }
+  .b-hrtech { background: #422006; color: #fcd34d; }
+  .b-logistics { background: #3b0764; color: #d8b4fe; }
+  .desc { font-size: 12px; color: #94a3b8; margin-bottom: 10px; line-height: 1.55; }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; }
+  .lpa { font-size: 13px; font-weight: 600; color: #4ade80; }
+  .funding { font-size: 12px; color: #64748b; }
+  .city { font-size: 12px; color: #64748b; }
+  .match-bar { margin-bottom: 8px; }
+  .match-label { font-size: 11px; color: #64748b; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .match-label span { color: #a5b4fc; font-weight: 500; }
+  .bar-bg { background: #2d3148; border-radius: 20px; height: 5px; }
+  .bar-fill { height: 5px; border-radius: 20px; background: linear-gradient(90deg, #4f46e5, #7c3aed); }
+  .bar-fill.high { background: linear-gradient(90deg, #16a34a, #4ade80); }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .stag { font-size: 10px; background: #0f172a; border: 1px solid #1e293b; color: #7dd3fc; padding: 2px 7px; border-radius: 4px; }
+  .stag.match { border-color: #4f46e5; color: #a5b4fc; }
+  .why-you { font-size: 11px; color: #64748b; margin-top: 8px; border-top: 1px solid #1e293b; padding-top: 8px; line-height: 1.6; }
+  .why-you strong { color: #94a3b8; }
+  .section-title { font-size: 13px; font-weight: 500; color: #94a3b8; margin-bottom: 1rem; margin-top: 1.5rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .resume-tips { background: #1e2130; border: 1px solid #2d3148; border-radius: 12px; padding: 16px 18px; margin-top: 2rem; }
+  .resume-tips h3 { font-size: 14px; font-weight: 600; color: #f1f5f9; margin-bottom: 12px; }
+  .tip { display: flex; gap: 10px; margin-bottom: 10px; font-size: 12px; color: #94a3b8; line-height: 1.6; }
+  .tip-icon { min-width: 20px; color: #4ade80; font-weight: 600; }
+  .tip strong { color: #e2e8f0; }
+  .gap-section { background: #1e2130; border: 1px solid #f59e0b33; border-radius: 12px; padding: 16px 18px; margin-top: 1.5rem; }
+  .gap-section h3 { font-size: 14px; font-weight: 600; color: #fcd34d; margin-bottom: 10px; }
+  .gap-item { display: flex; gap: 10px; margin-bottom: 8px; font-size: 12px; color: #94a3b8; line-height: 1.6; }
+  .gap-icon { min-width: 20px; color: #f59e0b; }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<h1>Shahid Noushad — Target Companies</h1>
+<p class="subtitle">Backend Developer (Node.js / MERN) · 8+ LPA · India Funded Startups</p>
+
+<div class="profile-bar">
+  <div>
+    <div class="name">Shahid Noushad</div>
+    <div class="role">Backend Developer · 1 Yr Exp · Kerala</div>
+  </div>
+  <span class="skill-pill hot">Node.js</span>
+  <span class="skill-pill hot">Express.js</span>
+  <span class="skill-pill">MongoDB</span>
+  <span class="skill-pill hot">Redis</span>
+  <span class="skill-pill">JWT Auth</span>
+  <span class="skill-pill">AWS S3</span>
+  <span class="skill-pill">REST APIs</span>
+  <span class="skill-pill">System Design</span>
+  <span class="skill-pill">Git · Postman</span>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-label">Companies listed</div><div class="stat-value">20</div></div>
+  <div class="stat"><div class="stat-label">Target salary</div><div class="stat-value green">8+ LPA</div></div>
+  <div class="stat"><div class="stat-label">Top matches</div><div class="stat-value">8</div></div>
+  <div class="stat"><div class="stat-label">Remote-friendly</div><div class="stat-value">12</div></div>
+</div>
+
+<div class="filters" id="filters">
+  <button class="filter-btn active" onclick="filter('all', this)">All (20)</button>
+  <button class="filter-btn" onclick="filter('top', this)">⭐ Top Match</button>
+  <button class="filter-btn" onclick="filter('saas', this)">SaaS</button>
+  <button class="filter-btn" onclick="filter('fintech', this)">Fintech</button>
+  <button class="filter-btn" onclick="filter('edtech', this)">EdTech</button>
+  <button class="filter-btn" onclick="filter('ai', this)">AI</button>
+  <button class="filter-btn" onclick="filter('remote', this)">Remote OK</button>
+</div>
+
+<div class="grid" id="grid">
+
+  <div class="card top-match" data-sector="saas" data-top="true" data-remote="true">
+    <div class="card-header"><span class="company-name">Chargebee</span><span class="sector-badge b-saas">SaaS</span></div>
+    <div class="desc">Subscription billing platform. Heavy on Node.js microservices, Redis caching for billing pipelines, and REST APIs. Perfect match for your backend skills.</div>
+    <div class="card-meta"><span class="lpa">₹10–14 LPA</span><span class="funding">Funded $466M</span><span class="city">📍 Chennai · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>95%</span></div><div class="bar-bg"><div class="bar-fill high" style="width:95%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">Redis</span><span class="stag match">MongoDB</span><span class="stag match">REST APIs</span><span class="stag match">System Design</span></div>
+    <div class="why-you"><strong>Why you:</strong> Your Redis caching + API optimization from Gravital directly maps to their billing event pipeline. Chennai base = Kerala-friendly commute or full remote.</div>
+  </div>
+
+  <div class="card top-match" data-sector="saas" data-top="true" data-remote="true">
+    <div class="card-header"><span class="company-name">Freshworks</span><span class="sector-badge b-saas">SaaS</span></div>
+    <div class="desc">World-class CRM/support SaaS. Backend roles involve Node.js API design, MongoDB schema optimization, and authentication systems — your exact toolkit.</div>
+    <div class="card-meta"><span class="lpa">₹10–18 LPA</span><span class="funding">Public · ₹4000Cr+ revenue</span><span class="city">📍 Chennai / Bangalore</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>92%</span></div><div class="bar-bg"><div class="bar-fill high" style="width:92%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">Express.js</span><span class="stag match">REST APIs</span><span class="stag match">System Design</span><span class="stag">PostgreSQL</span></div>
+    <div class="why-you"><strong>Why you:</strong> Your experience structuring modular backend architecture (controllers, services, middleware) matches their engineering culture exactly.</div>
+  </div>
+
+  <div class="card top-match" data-sector="hrtech" data-top="true" data-remote="true">
+    <div class="card-header"><span class="company-name">Darwinbox</span><span class="sector-badge b-hrtech">HRTech</span></div>
+    <div class="desc">Enterprise HR SaaS platform used by 850+ companies. Node.js backend, MongoDB collections for HR data, JWT auth for multi-tenant access.</div>
+    <div class="card-meta"><span class="lpa">₹9–14 LPA</span><span class="funding">Funded $140M</span><span class="city">📍 Hyderabad · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>90%</span></div><div class="bar-bg"><div class="bar-fill high" style="width:90%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">MongoDB</span><span class="stag match">JWT Auth</span><span class="stag match">REST APIs</span><span class="stag">Multi-tenant</span></div>
+    <div class="why-you"><strong>Why you:</strong> Your JWT + refresh token strategy directly fits their multi-tenant auth model. MongoDB schema design is core to their HR data layer.</div>
+  </div>
+
+  <div class="card top-match" data-sector="fintech" data-top="true" data-remote="false">
+    <div class="card-header"><span class="company-name">Razorpay</span><span class="sector-badge b-fintech">Fintech</span></div>
+    <div class="desc">India's #1 payments platform. Backend team works on high-performance Node.js APIs, Redis for rate-limiting and caching, AWS infrastructure.</div>
+    <div class="card-meta"><span class="lpa">₹12–20 LPA</span><span class="funding">Funded $741M · Unicorn</span><span class="city">📍 Bangalore</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>88%</span></div><div class="bar-bg"><div class="bar-fill high" style="width:88%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">Redis</span><span class="stag match">AWS</span><span class="stag match">REST APIs</span><span class="stag">High Scale</span></div>
+    <div class="why-you"><strong>Why you:</strong> Redis caching knowledge + AWS S3 + API optimization gives you a strong story. Competition is high — use your Gravital project as a systems design demo.</div>
+  </div>
+
+  <div class="card top-match" data-sector="ai" data-top="true" data-remote="true">
+    <div class="card-header"><span class="company-name">Yellow.ai</span><span class="sector-badge b-ai">AI / SaaS</span></div>
+    <div class="desc">Enterprise conversational AI. Backend built on Node.js + Express with event-driven architecture and Redis pub/sub for real-time bot management.</div>
+    <div class="card-meta"><span class="lpa">₹9–15 LPA</span><span class="funding">Funded $102M</span><span class="city">📍 Bangalore · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>87%</span></div><div class="bar-bg"><div class="bar-fill high" style="width:87%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">Express.js</span><span class="stag match">Redis</span><span class="stag match">MongoDB</span><span class="stag">WebSocket</span></div>
+    <div class="why-you"><strong>Why you:</strong> Real-time feed optimization from Gravital maps to their bot pipeline. Redis + event architecture is central to their platform.</div>
+  </div>
+
+  <div class="card top-match" data-sector="saas" data-top="true" data-remote="true">
+    <div class="card-header"><span class="company-name">Whatfix</span><span class="sector-badge b-saas">SaaS</span></div>
+    <div class="desc">Digital adoption SaaS. Node.js-heavy backend for event tracking, user sessions, and content delivery. Redis heavily used for session caching.</div>
+    <div class="card-meta"><span class="lpa">₹9–14 LPA</span><span class="funding">Funded $140M</span><span class="city">📍 Bangalore · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>86%</span></div><div class="bar-bg"><div class="bar-fill high" style="width:86%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">Redis</span><span class="stag match">JWT Auth</span><span class="stag match">MongoDB</span><span class="stag">Event tracking</span></div>
+    <div class="why-you"><strong>Why you:</strong> Session management and authentication are core backend challenges here — your JWT + Redis combo is exactly what they need.</div>
+  </div>
+
+  <div class="card top-match" data-sector="saas" data-top="true" data-remote="true">
+    <div class="card-header"><span class="company-name">WebEngage</span><span class="sector-badge b-saas">SaaS</span></div>
+    <div class="desc">Customer engagement SaaS. Campaign event pipelines, user segment APIs — Node.js + Redis architecture for high-volume notification delivery.</div>
+    <div class="card-meta"><span class="lpa">₹8–13 LPA</span><span class="funding">Funded $50M+</span><span class="city">📍 Mumbai · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>85%</span></div><div class="bar-bg"><div class="bar-fill high" style="width:85%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">MongoDB</span><span class="stag match">Redis</span><span class="stag match">REST APIs</span><span class="stag">Queues</span></div>
+    <div class="why-you"><strong>Why you:</strong> API optimization and caching are day-1 work here. Your feed optimization experience from Gravital is directly relevant.</div>
+  </div>
+
+  <div class="card top-match" data-sector="edtech" data-top="true" data-remote="true">
+    <div class="card-header"><span class="company-name">Scaler (InterviewBit)</span><span class="sector-badge b-edtech">EdTech</span></div>
+    <div class="desc">Tech education platform. Node.js APIs for coding platform, MongoDB for user progress tracking, Redis for leaderboard and session caching.</div>
+    <div class="card-meta"><span class="lpa">₹8–14 LPA</span><span class="funding">Funded $55M</span><span class="city">📍 Bangalore · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>88%</span></div><div class="bar-bg"><div class="bar-fill high" style="width:88%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">MongoDB</span><span class="stag match">Redis</span><span class="stag match">System Design</span><span class="stag">Brototype</span></div>
+    <div class="why-you"><strong>Why you:</strong> Your Brototype experience (mentoring 50+ devs, structuring programs) is a unique story for an edtech backend role. They'll love this.</div>
+  </div>
+
+  <!-- More companies -->
+
+  <div class="card" data-sector="saas" data-remote="true">
+    <div class="card-header"><span class="company-name">CleverTap</span><span class="sector-badge b-saas">SaaS</span></div>
+    <div class="desc">Mobile marketing analytics. Event ingestion APIs in Node.js, MongoDB for user event storage, Redis for real-time segment computation.</div>
+    <div class="card-meta"><span class="lpa">₹9–15 LPA</span><span class="funding">Funded $105M</span><span class="city">📍 Mumbai · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>82%</span></div><div class="bar-bg"><div class="bar-fill" style="width:82%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">MongoDB</span><span class="stag match">Redis</span><span class="stag match">API Optimization</span></div>
+    <div class="why-you"><strong>Why you:</strong> High-frequency API optimization is exactly your Gravital project strength — write clearly about feed generation performance in your cover letter.</div>
+  </div>
+
+  <div class="card" data-sector="fintech" data-remote="false">
+    <div class="card-header"><span class="company-name">Jupiter (Digital Bank)</span><span class="sector-badge b-fintech">Fintech</span></div>
+    <div class="desc">Neo-banking platform. Backend APIs for transactions, account management. Node.js with MongoDB + Redis for session and rate limiting.</div>
+    <div class="card-meta"><span class="lpa">₹10–16 LPA</span><span class="funding">Funded $161M</span><span class="city">📍 Bangalore</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>80%</span></div><div class="bar-bg"><div class="bar-fill" style="width:80%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">JWT Auth</span><span class="stag match">Redis</span><span class="stag match">AWS</span><span class="stag">Banking APIs</span></div>
+    <div class="why-you"><strong>Why you:</strong> Your JWT refresh token strategy + Redis caching is very relevant to banking session security requirements.</div>
+  </div>
+
+  <div class="card" data-sector="fintech" data-remote="false">
+    <div class="card-header"><span class="company-name">Slice (Credit Platform)</span><span class="sector-badge b-fintech">Fintech</span></div>
+    <div class="desc">Credit card and payments super-app. Node.js REST APIs for credit operations, MongoDB for user data, Redis for transaction caching.</div>
+    <div class="card-meta"><span class="lpa">₹9–14 LPA</span><span class="funding">Funded $220M</span><span class="city">📍 Bangalore</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>78%</span></div><div class="bar-bg"><div class="bar-fill" style="width:78%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">MongoDB</span><span class="stag match">Redis</span><span class="stag match">REST APIs</span></div>
+    <div class="why-you"><strong>Why you:</strong> Strong auth and caching skills match their fast-growing backend team needs. TypeScript would strengthen your application here.</div>
+  </div>
+
+  <div class="card" data-sector="hrtech" data-remote="true">
+    <div class="card-header"><span class="company-name">Keka HR</span><span class="sector-badge b-hrtech">HRTech</span></div>
+    <div class="desc">Payroll and HR SaaS for SMBs. Clean REST API architecture in Node.js, MongoDB collections for employee data and payroll processing.</div>
+    <div class="card-meta"><span class="lpa">₹8–12 LPA</span><span class="funding">Funded $57M</span><span class="city">📍 Hyderabad · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>82%</span></div><div class="bar-bg"><div class="bar-fill" style="width:82%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">Express.js</span><span class="stag match">MongoDB</span><span class="stag match">REST APIs</span></div>
+    <div class="why-you"><strong>Why you:</strong> Good entry point at 8+ LPA — smaller team means faster growth. Your modular architecture experience is a great fit.</div>
+  </div>
+
+  <div class="card" data-sector="saas" data-remote="true">
+    <div class="card-header"><span class="company-name">LocoNav</span><span class="sector-badge b-saas">SaaS</span></div>
+    <div class="desc">Fleet tracking SaaS. Real-time GPS data ingestion via Node.js, Redis for live vehicle state caching, MongoDB for trip history.</div>
+    <div class="card-meta"><span class="lpa">₹8–12 LPA</span><span class="funding">Funded $37M</span><span class="city">📍 Delhi · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>84%</span></div><div class="bar-bg"><div class="bar-fill" style="width:84%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">MongoDB</span><span class="stag match">Redis</span><span class="stag">WebSocket</span><span class="stag">Real-time</span></div>
+    <div class="why-you"><strong>Why you:</strong> Redis real-time caching is core to their product. Your Gravital feed optimization story maps perfectly here.</div>
+  </div>
+
+  <div class="card" data-sector="ai" data-remote="true">
+    <div class="card-header"><span class="company-name">Skit.ai</span><span class="sector-badge b-ai">AI / Voice</span></div>
+    <div class="desc">Voice AI automation startup. Node.js backend for call data APIs, MongoDB for conversation storage, Redis for real-time call state.</div>
+    <div class="card-meta"><span class="lpa">₹8–13 LPA</span><span class="funding">Funded $23M</span><span class="city">📍 Bangalore · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>78%</span></div><div class="bar-bg"><div class="bar-fill" style="width:78%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">Express.js</span><span class="stag match">MongoDB</span><span class="stag match">Redis</span></div>
+    <div class="why-you"><strong>Why you:</strong> Smaller funded startup — great for rapid skill growth and possibly ESOPs. Your system design knowledge will stand out here.</div>
+  </div>
+
+  <div class="card" data-sector="edtech" data-remote="true">
+    <div class="card-header"><span class="company-name">Classplus</span><span class="sector-badge b-edtech">EdTech</span></div>
+    <div class="desc">Coaching app platform for vernacular tutors. Node.js APIs for content delivery, MongoDB schemas for course/student data, AWS S3 for media.</div>
+    <div class="card-meta"><span class="lpa">₹8–13 LPA</span><span class="funding">Funded $170M</span><span class="city">📍 Noida · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>85%</span></div><div class="bar-bg"><div class="bar-fill" style="width:85%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">MongoDB</span><span class="stag match">AWS S3</span><span class="stag match">REST APIs</span></div>
+    <div class="why-you"><strong>Why you:</strong> AWS S3 media storage from Gravital is directly relevant — they store massive amounts of video and PDF content on S3.</div>
+  </div>
+
+  <div class="card" data-sector="saas" data-remote="true">
+    <div class="card-header"><span class="company-name">Leena AI</span><span class="sector-badge b-ai">AI / HRTech</span></div>
+    <div class="desc">AI-powered HR automation. Node.js microservices, MongoDB for employee query history, Redis for chatbot session management.</div>
+    <div class="card-meta"><span class="lpa">₹8–13 LPA</span><span class="funding">Funded $30M</span><span class="city">📍 Bangalore · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>80%</span></div><div class="bar-bg"><div class="bar-fill" style="width:80%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">MongoDB</span><span class="stag match">Redis</span><span class="stag match">Express.js</span></div>
+    <div class="why-you"><strong>Why you:</strong> Smaller team = more ownership. Your project manager background at Brototype shows leadership potential beyond just coding.</div>
+  </div>
+
+  <div class="card" data-sector="fintech" data-remote="false">
+    <div class="card-header"><span class="company-name">Plum (Insurance)</span><span class="sector-badge b-fintech">Fintech</span></div>
+    <div class="desc">Employee health insurance platform. Node.js APIs for policy management, JWT auth for employer/employee access, MongoDB for claims data.</div>
+    <div class="card-meta"><span class="lpa">₹9–14 LPA</span><span class="funding">Funded $46M</span><span class="city">📍 Bangalore</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>79%</span></div><div class="bar-bg"><div class="bar-fill" style="width:79%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">JWT Auth</span><span class="stag match">MongoDB</span><span class="stag match">REST APIs</span></div>
+    <div class="why-you"><strong>Why you:</strong> Multi-role auth (employer/employee/insurer) is exactly your JWT refresh token strength. Good fintech entry point.</div>
+  </div>
+
+  <div class="card" data-sector="saas" data-remote="true">
+    <div class="card-header"><span class="company-name">Salesken</span><span class="sector-badge b-ai">AI / SaaS</span></div>
+    <div class="desc">Conversational intelligence for sales. Real-time call transcription pipeline in Node.js, Redis for live call state, MongoDB for conversation history.</div>
+    <div class="card-meta"><span class="lpa">₹8–12 LPA</span><span class="funding">Funded $27M</span><span class="city">📍 Bangalore · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>77%</span></div><div class="bar-bg"><div class="bar-fill" style="width:77%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">Redis</span><span class="stag match">MongoDB</span><span class="stag">Real-time</span></div>
+    <div class="why-you"><strong>Why you:</strong> Your Redis caching knowledge is directly applicable to their real-time call analytics pipeline.</div>
+  </div>
+
+  <div class="card" data-sector="saas" data-remote="true">
+    <div class="card-header"><span class="company-name">Springworks</span><span class="sector-badge b-hrtech">HRTech / SaaS</span></div>
+    <div class="desc">Employee engagement SaaS. Node.js + Express backend for Slack integrations, MongoDB for engagement data. Small fast-moving team.</div>
+    <div class="card-meta"><span class="lpa">₹8–12 LPA</span><span class="funding">Series A backed</span><span class="city">📍 Bangalore · Remote OK</span></div>
+    <div class="match-bar"><div class="match-label">Resume match <span>75%</span></div><div class="bar-bg"><div class="bar-fill" style="width:75%"></div></div></div>
+    <div class="skill-tags"><span class="stag match">Node.js</span><span class="stag match">Express.js</span><span class="stag match">MongoDB</span><span class="stag">Slack APIs</span></div>
+    <div class="why-you"><strong>Why you:</strong> Great for remote work from Kerala. Small teams mean you'll own full backend features from day one.</div>
+  </div>
+
+</div>
+
+<!-- Skill Gaps -->
+<div class="gap-section">
+  <h3>⚠ Skills to Add Before Applying (to unlock 10-16 LPA range)</h3>
+  <div class="gap-item"><div class="gap-icon">→</div><div><strong style="color:#e2e8f0">TypeScript</strong> — Almost every 10+ LPA Node.js role now requires TypeScript. Add it to your stack: 2–3 weeks to get job-ready level.</div></div>
+  <div class="gap-item"><div class="gap-icon">→</div><div><strong style="color:#e2e8f0">Docker basics</strong> — Containerisation is expected at funded startups. A simple Node.js Dockerized project on your GitHub is enough.</div></div>
+  <div class="gap-item"><div class="gap-icon">→</div><div><strong style="color:#e2e8f0">PostgreSQL / SQL</strong> — Fintech companies (Razorpay, Jupiter, Slice) use relational DBs. Even basic SQL knowledge removes a blocker for those JDs.</div></div>
+  <div class="gap-item"><div class="gap-icon">→</div><div><strong style="color:#e2e8f0">Message queues (BullMQ / RabbitMQ)</strong> — You already use Redis. Add BullMQ (Redis-based) job queues to Gravital — it's a weekend project and shows production thinking.</div></div>
+  <div class="gap-item"><div class="gap-icon">→</div><div><strong style="color:#e2e8f0">Unit testing (Jest)</strong> — Mention testing in your resume. Even basic unit tests on your Gravital project APIs will help for senior-leaning backend roles.</div></div>
+</div>
+
+<!-- Resume Tips -->
+<div class="resume-tips">
+  <h3>📝 Resume improvements specific to 8+ LPA roles</h3>
+  <div class="tip"><div class="tip-icon">✓</div><div><strong>Quantify Gravital</strong> — Instead of "Optimized API performance", write: "Reduced feed API response time by ~40% using Redis caching + MongoDB indexing." Numbers matter at funded startups.</div></div>
+  <div class="tip"><div class="tip-icon">✓</div><div><strong>Add GitHub link prominently</strong> — Your GitHub (shahid123s) must have Gravital with a clean README, architecture diagram, and .env.example. Recruiters check this before calling.</div></div>
+  <div class="tip"><div class="tip-icon">✓</div><div><strong>Mention "50+ projects reviewed"</strong> differently — Reframe as: "Provided backend architecture review and mentorship across 50+ production-grade MERN projects." That reads as senior experience.</div></div>
+  <div class="tip"><div class="tip-icon">✓</div><div><strong>Add a "System Design" section</strong> to your LinkedIn — Post one article or carousel about how you designed Gravital's architecture. This generates recruiter inbound for 8+ LPA roles.</div></div>
+  <div class="tip"><div class="tip-icon">✓</div><div><strong>Target Chennai and Hyderabad first</strong> — Being from Kerala makes Chennai (Chargebee, Freshworks) the most accessible metro. Hyderabad (Darwinbox, Keka) is also reachable. Bangalore is the biggest market but higher competition.</div></div>
+</div>
+
+<p style="font-size:11px;color:#475569;margin-top:2rem;text-align:center;">Generated for Shahid Noushad · April 2026 · Based on public funding data and JD analysis</p>
+
+<script>
+function filter(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  var cards = document.querySelectorAll('.card');
+  cards.forEach(function(c) {
+    if (type === 'all') { c.style.display = ''; }
+    else if (type === 'top') { c.style.display = c.dataset.top ? '' : 'none'; }
+    else if (type === 'remote') { c.style.display = c.dataset.remote === 'true' ? '' : 'none'; }
+    else { c.style.display = c.dataset.sector === type ? '' : 'none'; }
+  });
+}
+</script>
+
+</body>
+</html>

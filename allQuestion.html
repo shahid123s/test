@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shahid – Interview Questions</title>
+<style>
+:root {
+  --color-background-primary: #0f1117;
+  --color-background-secondary: #1e2130;
+  --color-background-tertiary: #2d3148;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #64748b;
+  --color-text-success: #4ade80;
+  --color-background-success: rgba(74, 222, 128, 0.1);
+  --color-text-warning: #fbbf24;
+  --color-background-warning: rgba(251, 191, 36, 0.1);
+  --color-text-danger: #f87171;
+  --color-background-danger: rgba(248, 113, 113, 0.1);
+  --color-text-info: #7dd3fc;
+  --color-background-info: rgba(125, 211, 252, 0.1);
+  --color-border-info: #0ea5e9;
+  --color-border-secondary: #334155;
+  --color-border-tertiary: #2d3148;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body { 
+  background: var(--color-background-primary); 
+  color: var(--color-text-primary); 
+  font-family: var(--font-sans); 
+  padding: 2rem 1.5rem; 
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container { padding: 1.5rem 0; max-width: 900px; margin: 0 auto; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+.filter-btn { 
+  padding: 6px 14px; 
+  border-radius: 20px; 
+  border: 1px solid var(--color-border-secondary); 
+  background: var(--color-background-secondary); 
+  color: var(--color-text-secondary); 
+  font-size: 13px; 
+  cursor: pointer; 
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+.filter-btn:hover {
+  background: var(--color-background-tertiary);
+  color: var(--color-text-primary);
+  border-color: var(--color-text-info);
+}
+.filter-btn.active { 
+  background: var(--color-background-info); 
+  border-color: var(--color-border-info); 
+  color: var(--color-text-info); 
+}
+
+.progress-bar { height: 6px; background: var(--color-background-tertiary); border-radius: 20px; margin-bottom: 1.25rem; overflow: hidden; }
+.progress-fill { 
+  height: 100%; 
+  background: linear-gradient(90deg, #4ade80, #22c55e); 
+  border-radius: 20px; 
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); 
+}
+
+.stats { display: flex; gap: 16px; margin-bottom: 2rem; flex-wrap: wrap; }
+.stat { font-size: 13px; color: var(--color-text-secondary); background: var(--color-background-secondary); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--color-border-tertiary); }
+.stat span { font-weight: 600; color: var(--color-text-primary); margin-left: 4px; }
+
+.question-card { 
+  background: var(--color-background-secondary); 
+  border: 1px solid var(--color-border-tertiary); 
+  border-radius: var(--border-radius-lg); 
+  padding: 1.25rem; 
+  margin-bottom: 1rem; 
+  transition: all 0.2s ease; 
+  position: relative;
+  overflow: hidden;
+}
+.question-card:hover { 
+  border-color: var(--color-border-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.question-card.done { border-left: 4px solid var(--color-text-success); }
+.question-card.flagged { border-left: 4px solid var(--color-text-warning); }
+
+.q-header { display: flex; align-items: flex-start; gap: 12px; }
+.q-num { font-size: 12px; color: var(--color-text-tertiary); min-width: 26px; padding-top: 3px; font-weight: 600; }
+.q-text { font-size: 15px; color: var(--color-text-primary); line-height: 1.6; flex: 1; }
+
+.q-meta { 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  margin-top: 1rem; 
+  padding-top: 1rem; 
+  border-top: 1px solid var(--color-border-tertiary); 
+  flex-wrap: wrap; 
+}
+
+.badge { font-size: 11px; padding: 4px 10px; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+.badge-node { background: rgba(131, 205, 41, 0.1); color: #83cd29; border: 1px solid rgba(131, 205, 41, 0.2); }
+.badge-mongo { background: rgba(71, 162, 72, 0.1); color: #47a248; border: 1px solid rgba(71, 162, 72, 0.2); }
+.badge-sql { background: rgba(51, 103, 145, 0.1); color: #336791; border: 1px solid rgba(51, 103, 145, 0.2); }
+.badge-react { background: rgba(97, 218, 251, 0.1); color: #61dafb; border: 1px solid rgba(97, 218, 251, 0.2); }
+
+.diff { font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.diff.hard { color: var(--color-text-danger); }
+.diff.medium { color: var(--color-text-warning); }
+.diff.easy { color: var(--color-text-success); }
+
+.actions { display: flex; gap: 8px; margin-left: auto; }
+.action-btn { 
+  font-size: 11px; 
+  padding: 5px 10px; 
+  border-radius: 6px; 
+  border: 1px solid var(--color-border-tertiary); 
+  background: var(--color-background-tertiary); 
+  color: var(--color-text-secondary); 
+  cursor: pointer; 
+  transition: all 0.2s; 
+}
+.action-btn:hover { 
+  background: var(--color-background-secondary); 
+  border-color: var(--color-text-info);
+  color: var(--color-text-primary);
+}
+
+.hint-box { 
+  display: none; 
+  margin-top: 1rem; 
+  padding: 1rem; 
+  background: var(--color-background-tertiary); 
+  border-radius: var(--border-radius-md); 
+  font-size: 13px; 
+  color: var(--color-text-secondary); 
+  line-height: 1.6; 
+  border-left: 2px solid var(--color-text-info);
+  animation: slideDown 0.3s ease-out;
+}
+.hint-box.visible { display: block; }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.empty { text-align: center; padding: 4rem; color: var(--color-text-tertiary); font-size: 15px; background: var(--color-background-secondary); border-radius: 12px; border: 1px dashed var(--color-border-tertiary); }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+
+h1 { font-size: 1.8rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.5rem; }
+.subtitle { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 2rem; }
+
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Interview Questions</h1>
+  <p class="subtitle">60 essential questions for 10 LPA roles across Node.js, MongoDB, SQL, and React</p>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all')">All (60)</button>
+    <button class="filter-btn" onclick="setFilter('Node.js')">Node.js (15)</button>
+    <button class="filter-btn" onclick="setFilter('MongoDB')">MongoDB (15)</button>
+    <button class="filter-btn" onclick="setFilter('SQL')">SQL (15)</button>
+    <button class="filter-btn" onclick="setFilter('React')">React (15)</button>
+    <button class="filter-btn" onclick="setFilter('done')">Done</button>
+    <button class="filter-btn" onclick="setFilter('flagged')">Flagged</button>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+  <div class="stats">
+    <div class="stat">Showing: <span id="total-count">60</span></div>
+    <div class="stat">Done: <span id="done-count">0</span></div>
+    <div class="stat">Flagged: <span id="flag-count">0</span></div>
+    <div class="stat">Progress: <span id="pct">0%</span></div>
+  </div>
+
+  <div id="questions-list"></div>
+</div>
+
+<script>
+const questions = [
+  // Node.js
+  { id:1, cat:'Node.js', diff:'medium', text:'Explain the Node.js event loop in detail. What are the phases: timers, I/O callbacks, idle, poll, check, close?', hint:'Each tick: timers → pending callbacks → idle/prepare → poll (block for I/O) → setImmediate → close callbacks. process.nextTick fires between every phase.' },
+  { id:2, cat:'Node.js', diff:'hard', text:'What is the difference between process.nextTick(), setImmediate(), and setTimeout(fn, 0)? In what order do they fire?', hint:'nextTick fires before I/O (same phase, recursive starvation risk). setImmediate fires in check phase after I/O. setTimeout(0) fires in timers phase — can be after setImmediate if inside I/O callback.' },
+  { id:3, cat:'Node.js', diff:'medium', text:'How does Node.js handle CPU-intensive tasks? What options do you have to avoid blocking the event loop?', hint:'Worker Threads (true parallelism), child_process.fork, offload to C++ addons, or move to a separate service. cluster module for multi-core.' },
+  { id:4, cat:'Node.js', diff:'medium', text:'Explain streams in Node.js. What are the four types and when would you use a Transform stream?', hint:'Readable, Writable, Duplex, Transform. Transform: compression, encryption, parsing on-the-fly. Backpressure via highWaterMark and .pipe().' },
+  { id:5, cat:'Node.js', diff:'hard', text:'How do you implement a robust error handling strategy in an Express app including async errors?', hint:'express-async-errors or try/catch + next(err), centralized error middleware with 4 params, unhandledRejection and uncaughtException handlers, never let process die silently.' },
+  { id:6, cat:'Node.js', diff:'medium', text:'What is the module system in Node.js? Compare CommonJS (require) with ES Modules (import). What are the key differences?', hint:'CJS: synchronous, cached, dynamic require(). ESM: static analysis, tree-shakeable, top-level await, .mjs or "type":"module". CJS cannot import ESM synchronously.' },
+  { id:7, cat:'Node.js', diff:'hard', text:'Design a connection pool for a database in Node.js. How do you handle pool exhaustion and connection timeouts?', hint:'pg-pool/mongoose pooling, min/max connections, idleTimeoutMillis, acquire timeout, queue requests, emit error events, health check idle connections.' },
+  { id:8, cat:'Node.js', diff:'medium', text:'How does Node.js clustering work? Write pseudocode for a cluster setup that restarts dead workers.', hint:'cluster.isMaster forks workers (os.cpus().length), listen for "exit" event and fork a replacement, share TCP connections across workers via OS round-robin (Linux).' },
+  { id:9, cat:'Node.js', diff:'easy', text:'What are the differences between EventEmitter and streams? How would you build a custom EventEmitter?', hint:'EventEmitter: pub/sub in memory, sync by default. Streams: EventEmitter + backpressure + buffering. Custom: extend EventEmitter, call emit(), on(), once(), removeListener().' },
+  { id:10, cat:'Node.js', diff:'hard', text:'How do you prevent memory leaks in a long-running Node.js process? Name 5 common causes.', hint:'Global caches growing unbounded, event listener not removed, closures holding refs, timers not cleared, circular references with WeakRef. Use --inspect + heap snapshots.' },
+  { id:11, cat:'Node.js', diff:'medium', text:'Implement a rate limiter middleware in Express without any external library.', hint:'In-memory Map keyed by IP, store {count, resetTime}. On each request check count vs limit, return 429 if exceeded, reset after window expires.' },
+  { id:12, cat:'Node.js', diff:'medium', text:'What is middleware in Express? Explain the order of execution and how error middleware differs.', hint:'req/res/next chain, order matters, router-level vs app-level, error middleware has 4 params (err,req,res,next). Calling next("route") skips remaining handlers.' },
+  { id:13, cat:'Node.js', diff:'hard', text:'How would you structure a Node.js application for production? Describe folder structure, env management, logging, and graceful shutdown.', hint:'Feature-based modules, dotenv + config library, winston/pino structured logging, SIGTERM → drain connections → close DB → exit. PM2 or Docker for process management.' },
+  { id:14, cat:'Node.js', diff:'easy', text:'What is the purpose of package-lock.json vs package.json? What happens if you delete package-lock.json?', hint:'package.json: semver ranges. package-lock.json: exact resolved versions for deterministic installs. Deleting may update transitive deps, breaking reproducibility.' },
+  { id:15, cat:'Node.js', diff:'medium', text:'Explain how JWT authentication works in a Node.js API. Where do you store the token on the client and why?', hint:'HttpOnly cookie (XSS safe, CSRF risk → mitigate with SameSite=Strict) vs localStorage (CSRF safe, XSS risk). Refresh token rotation, access token short TTL (15min).' },
+
+  // MongoDB
+  { id:16, cat:'MongoDB', diff:'medium', text:'Explain MongoDB\'s document model. When would you embed a document vs reference another collection?', hint:'Embed when data is always accessed together, 1:1 or 1:few, doc stays < 16MB. Reference when data is shared, 1:many (large), or updated independently.' },
+  { id:17, cat:'MongoDB', diff:'hard', text:'Write an aggregation pipeline that joins two collections, filters, groups, and sorts. Explain each stage.', hint:'$lookup (join), $match (filter early for perf), $unwind (flatten arrays), $group (reduce), $sort, $project (shape output). $match before $lookup reduces scanned docs.' },
+  { id:18, cat:'MongoDB', diff:'medium', text:'What types of indexes does MongoDB support? When would you use a compound index vs a text index?', hint:'Single, compound, multikey (arrays), text, geospatial, hashed, TTL. Compound follows ESR rule (Equality, Sort, Range). Text for full-text search with language stemming.' },
+  { id:19, cat:'MongoDB', diff:'hard', text:'How does MongoDB handle transactions? What are the limitations of multi-document ACID transactions?', hint:'Supported since 4.0 (replica sets) and 4.2 (sharded). Performance overhead — avoid if embedding works. Max 1000 modified docs per txn, 60s default timeout.' },
+  { id:20, cat:'MongoDB', diff:'medium', text:'What is the aggregation pipeline\'s $lookup stage? How does it differ from a SQL JOIN in terms of performance?', hint:'$lookup does a hash join on the server, no streaming — materializes right collection in memory. Use indexes on the "from" field. Avoid on large unconstrained collections.' },
+  { id:21, cat:'MongoDB', diff:'hard', text:'How does MongoDB replication work? Explain primary, secondaries, and the election process when primary fails.', hint:'Oplog-based async replication. Election uses Raft-like protocol, majority vote required. Read preference: primary/primaryPreferred/secondary/nearest. Replica set minimum 3 nodes.' },
+  { id:22, cat:'MongoDB', diff:'medium', text:'Explain the WiredTiger storage engine. How does document-level locking differ from collection-level locking?', hint:'WiredTiger: document-level concurrency (MVCC snapshots), compression (snappy/zlib), cache = 50% RAM. MMAPv1 (deprecated) was collection-level locking.' },
+  { id:23, cat:'MongoDB', diff:'easy', text:'What is the difference between find() and findOne()? How do you use projection to limit returned fields?', hint:'findOne() returns first match as object. find() returns cursor. Projection: {name:1, _id:0} — 1 to include, 0 to exclude. Cannot mix include/exclude except _id.' },
+  { id:24, cat:'MongoDB', diff:'hard', text:'Design a schema for a product catalog with categories, variants (size/color), and inventory. Justify your design.', hint:'Embed variants (bounded, always shown together). Reference category (shared across products). Inventory as sub-doc or separate collection depending on update frequency.' },
+  { id:25, cat:'MongoDB', diff:'medium', text:'How do you handle schema migrations in MongoDB when there is no enforced schema?', hint:'Schema versioning field, lazy migration on read, background migration script with batching, blue-green approach. Mongoose validators and $jsonSchema for schema enforcement.' },
+  { id:26, cat:'MongoDB', diff:'medium', text:'What is the explain() plan in MongoDB? What does COLLSCAN vs IXSCAN mean and how do you fix a COLLSCAN?', hint:'COLLSCAN = full collection scan (bad on large collections). IXSCAN = index used. Fix: add index matching query predicate. Check winningPlan vs rejectedPlans in output.' },
+  { id:27, cat:'MongoDB', diff:'hard', text:'How does MongoDB sharding work? What is a shard key and what makes a good vs bad shard key?', hint:'Good: high cardinality, even distribution, query-targeted (avoid scatter-gather). Bad: monotonically increasing (_id), low cardinality (boolean). Hashed shard key for even write dist.' },
+  { id:28, cat:'MongoDB', diff:'easy', text:'What are MongoDB update operators? Explain $set, $push, $pull, $inc, $addToSet with examples.', hint:'$set: update field. $inc: increment. $push: add to array. $pull: remove from array by condition. $addToSet: push only if not exists. Use with updateOne/updateMany.' },
+  { id:29, cat:'MongoDB', diff:'medium', text:'How do you implement pagination in MongoDB efficiently for a collection with 10M documents?', hint:'Avoid skip() for large offsets (slow). Use range query on indexed field (keyset pagination): {_id: {$gt: lastId}} .limit(20). Much faster than skip(900000).limit(20).' },
+  { id:30, cat:'MongoDB', diff:'hard', text:'How do you perform full-text search in MongoDB? When would you use Atlas Search vs a dedicated search engine?', hint:'$text index for basic search. Atlas Search (Lucene-based) for relevance scoring, facets, fuzzy, autocomplete. Elasticsearch for enterprise-scale, complex ranking, multi-collection.' },
+
+  // SQL
+  { id:31, cat:'SQL', diff:'medium', text:'Explain the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL OUTER JOIN with examples.', hint:'INNER: matching rows only. LEFT: all from left + matches. RIGHT: all from right + matches. FULL OUTER: all from both. NULL fills non-matching side.' },
+  { id:32, cat:'SQL', diff:'hard', text:'Write a query to find the second highest salary in an employees table without using LIMIT/TOP.', hint:'SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees). Or use DENSE_RANK() window function: WHERE rank = 2.' },
+  { id:33, cat:'SQL', diff:'hard', text:'What are window functions? Write a query using ROW_NUMBER, RANK, DENSE_RANK, and LAG to analyze sales data.', hint:'Window functions operate on a partition without collapsing rows. PARTITION BY groups, ORDER BY ranks. LAG(col, 1) accesses previous row — great for period-over-period comparison.' },
+  { id:34, cat:'SQL', diff:'medium', text:'What is the difference between WHERE and HAVING? When does each clause execute in the query order?', hint:'Execution order: FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT. WHERE filters rows before grouping. HAVING filters groups after aggregation.' },
+  { id:35, cat:'SQL', diff:'hard', text:'Explain query execution plans. What is the difference between a nested loop join, hash join, and merge join?', hint:'Nested loop: good for small tables/index lookups. Hash join: large unsorted tables (builds hash table). Merge join: pre-sorted inputs, most efficient. Planner chooses based on stats.' },
+  { id:36, cat:'SQL', diff:'medium', text:'What are database indexes? Explain B-tree vs hash indexes and when each is appropriate.', hint:'B-tree: range queries, ORDER BY, LIKE "abc%". Hash: only equality (=). Most DBs default to B-tree. PostgreSQL also has GIN (arrays/JSON/tsvector) and GiST (geometric).' },
+  { id:37, cat:'SQL', diff:'hard', text:'What are the four ACID properties? Give a concrete example of what breaks without each one.', hint:'Atomicity (partial transfer), Consistency (negative balance), Isolation (dirty read), Durability (crash loses committed txn). Each maps to a specific failure mode.' },
+  { id:38, cat:'SQL', diff:'medium', text:'What is the N+1 query problem in SQL? How do you detect and fix it?', hint:'1 query to fetch list + N queries to fetch related data per row. Fix: JOIN or WHERE IN(), use query logging (slow query log), use ORM eager loading.' },
+  { id:39, cat:'SQL', diff:'hard', text:'Design a normalized schema for an e-commerce platform (users, orders, products, categories). Show relationships and keys.', hint:'Users → Orders (1:N), Orders → OrderItems (1:N), OrderItems → Products (N:1), Products → Categories (N:M via junction table). Foreign keys, composite PKs on junction.' },
+  { id:40, cat:'SQL', diff:'medium', text:'What is a CTE (Common Table Expression)? How does it differ from a subquery and when is it more useful?', hint:'WITH cte AS (...) SELECT ... Recursive CTEs for hierarchical data (org charts, BOM). CTEs improve readability, can be referenced multiple times, planner may or may not materialize.' },
+  { id:41, cat:'SQL', diff:'easy', text:'What is the difference between DELETE, TRUNCATE, and DROP? Which can be rolled back?', hint:'DELETE: row-by-row, WHERE clause, can rollback, triggers fire. TRUNCATE: fast (deallocates pages), cannot rollback in MySQL (can in PostgreSQL). DROP: removes table structure entirely.' },
+  { id:42, cat:'SQL', diff:'hard', text:'What are database isolation levels? Explain READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE and what anomalies each prevents.', hint:'Dirty read → phantom read → non-repeatable read → all anomalies. PostgreSQL default: READ COMMITTED. MySQL InnoDB default: REPEATABLE READ. SERIALIZABLE uses predicate locks.' },
+  { id:43, cat:'SQL', diff:'medium', text:'How does PostgreSQL handle full-text search? Compare tsvector/tsquery with LIKE and when to use each.', hint:'LIKE "%term%": no index, seq scan. tsvector: GIN index, stemming, ranking (ts_rank), multilingual. For complex search use pg_trgm (similarity) or switch to Elasticsearch.' },
+  { id:44, cat:'SQL', diff:'medium', text:'Explain what a covering index is and why it matters for query performance.', hint:'An index that contains all columns needed by the query — no heap lookup required (index-only scan). E.g., CREATE INDEX ON orders(user_id) INCLUDE (status, created_at).' },
+  { id:45, cat:'SQL', diff:'hard', text:'How do you design a table for hierarchical data (e.g., category tree)? Compare adjacency list, nested sets, closure table, and ltree.', hint:'Adjacency list: simple, bad for deep queries. Nested sets: fast reads, slow writes. Closure table: fast reads + writes, extra storage. ltree (PostgreSQL): elegant path queries.' },
+
+  // React
+  { id:46, cat:'React', diff:'medium', text:'Explain the difference between useEffect and useLayoutEffect. When would using useEffect cause a visual flicker?', hint:'useLayoutEffect fires synchronously after DOM mutations, before paint — use for reading layout. useEffect fires async after paint. Flicker: reading DOM measurements (scroll, width) in useEffect.' },
+  { id:47, cat:'React', diff:'hard', text:'How does React\'s reconciliation algorithm (Fiber) work? What heuristics does it use to diff the virtual DOM?', hint:'Same type → update (reuse DOM). Different type → unmount + remount. Key prop for list stability. Fiber splits work into units, can pause/resume for concurrent mode.' },
+  { id:48, cat:'React', diff:'medium', text:'What is the problem with using array index as key in lists? Give a concrete example of a bug it causes.', hint:'Index key causes React to reuse wrong DOM elements when items reorder or are deleted mid-list. Example: input values staying on wrong items after sorting a list of inputs.' },
+  { id:49, cat:'React', diff:'hard', text:'Explain useCallback and useMemo. When do they actually help performance and when are they premature optimization?', hint:'Only helps when: (1) child wrapped in React.memo, (2) dep of another hook. Premature if the child re-renders anyway or computation is trivial. Measure first with Profiler.' },
+  { id:50, cat:'React', diff:'hard', text:'How does React Context work under the hood? What is the performance pitfall and how do you solve it?', hint:'Every consumer re-renders when context value changes (referential equality). Solution: split contexts, memoize value, use useMemo on the provider value object, or use Zustand/Jotai.' },
+  { id:51, cat:'React', diff:'medium', text:'What is the difference between controlled and uncontrolled components? When would you choose uncontrolled?', hint:'Controlled: React state is source of truth (onChange updates state). Uncontrolled: DOM is source of truth (useRef to read). Use uncontrolled for file inputs, or when integrating with non-React libs.' },
+  { id:52, cat:'React', diff:'hard', text:'Implement a custom hook useDebounce. How do you prevent stale closure issues inside it?', hint:'useEffect with setTimeout, cleanup clears previous timeout. Stale closure: use useRef to hold latest callback, or include value in dep array. Return debounced value.' },
+  { id:53, cat:'React', diff:'medium', text:'What are React portals? Give two real-world use cases where they solve layout problems.', hint:'ReactDOM.createPortal(child, container) — renders outside parent DOM hierarchy. Use for: modals (overflow:hidden parent), tooltips/dropdowns (z-index stacking context issues).' },
+  { id:54, cat:'React', diff:'hard', text:'Explain React concurrent features: Suspense, useTransition, and useDeferredValue. How do they improve UX?', hint:'useTransition: marks state update as non-urgent (keeps UI responsive). useDeferredValue: defer updating a value until urgent work done. Suspense: coordinate async loading states declaratively.' },
+  { id:55, cat:'React', diff:'medium', text:'How does code splitting work in React? Implement lazy loading for a route using React.lazy and Suspense.', hint:'React.lazy(() => import("./Page")) with <Suspense fallback={...}>. Webpack creates separate chunk. Route-based splitting most impactful. Preload on hover for better UX.' },
+  { id:56, cat:'React', diff:'easy', text:'What is prop drilling and what are the solutions? Compare Context, Redux, Zustand, and component composition.', hint:'Prop drilling: passing props through many layers. Context for low-frequency global state. Redux for complex state machines. Zustand lightweight. Composition (render props, children) avoids state entirely.' },
+  { id:57, cat:'React', diff:'hard', text:'How would you optimize a React list rendering 10,000 items? Explain windowing/virtualization.', hint:'react-window or react-virtual: only render visible rows (viewport + buffer). Fixed vs variable row height. Keys stable. Alternative: pagination. Never render all 10k DOM nodes.' },
+  { id:58, cat:'React', diff:'medium', text:'Explain the useReducer hook. When should you choose it over useState?', hint:'useReducer: when next state depends on previous + action type, complex state shape, multiple sub-values. Centralizes state logic, easier to test. useState: simple, independent values.' },
+  { id:59, cat:'React', diff:'hard', text:'What is React\'s strict mode and what double-invocation behavior does it enable in development?', hint:'StrictMode double-invokes: render, state initializer functions, reducers — to detect side effects in pure functions. Detects deprecated APIs. No-op in production. Helps spot useEffect cleanup issues.' },
+  { id:60, cat:'React', diff:'medium', text:'How do you handle forms in React at scale? Compare React Hook Form vs Formik vs controlled components.', hint:'Controlled: simple but re-renders on every keystroke. Formik: uncontrolled internals + validation. React Hook Form: uncontrolled (refs), minimal re-renders, Zod/Yup schema validation, best perf.' },
+];
+
+let state = (() => {
+  try {
+    const s = JSON.parse(localStorage.getItem('sdq2_state') || 'null');
+    if (s) return { done: new Set(s.done), flagged: new Set(s.flagged), hints: new Set(s.hints) };
+  } catch(e) {}
+  return { done: new Set(), flagged: new Set(), hints: new Set() };
+})();
+
+function saveState() {
+  try { localStorage.setItem('sdq2_state', JSON.stringify({ done: [...state.done], flagged: [...state.flagged], hints: [...state.hints] })); } catch(e) {}
+}
+
+let currentFilter = 'all';
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    const t = b.textContent;
+    b.classList.toggle('active',
+      f === 'all' ? t.startsWith('All') :
+      f === 'done' ? t === 'Done' :
+      f === 'flagged' ? t === 'Flagged' :
+      t.startsWith(f)
+    );
+  });
+  render();
+}
+
+function toggleDone(id, e) { e.stopPropagation(); state.done.has(id) ? state.done.delete(id) : state.done.add(id); saveState(); render(); }
+function toggleFlag(id, e) { e.stopPropagation(); state.flagged.has(id) ? state.flagged.delete(id) : state.flagged.add(id); saveState(); render(); }
+function toggleHint(id, e) { e.stopPropagation(); state.hints.has(id) ? state.hints.delete(id) : state.hints.add(id); saveState(); renderCard(id); }
+function askClaude(text, e) { e.stopPropagation(); if (typeof sendPrompt === 'function') { sendPrompt('Walk me through how to answer this interview question: "' + text + '"'); } else { console.log('AI agent integration not found.'); } }
+
+function badgeClass(cat) {
+  return { 'Node.js': 'badge-node', 'MongoDB': 'badge-mongo', 'SQL': 'badge-sql', 'React': 'badge-react' }[cat] || '';
+}
+
+function renderCard(id) {
+  const q = questions.find(x => x.id === id);
+  const el = document.getElementById('q-' + id);
+  if (!el) return;
+  const isDone = state.done.has(id), isFlagged = state.flagged.has(id), showHint = state.hints.has(id);
+  el.className = 'question-card' + (isDone ? ' done' : isFlagged ? ' flagged' : '');
+  el.innerHTML = `
+    <div class="q-header">
+      <div class="q-num">${q.id}.</div>
+      <div class="q-text">${q.text}</div>
+    </div>
+    <div class="q-meta">
+      <span class="badge ${badgeClass(q.cat)}">${q.cat}</span>
+      <span class="diff ${q.diff}">${q.diff}</span>
+      <div class="actions">
+        <button class="action-btn" onclick="toggleHint(${q.id}, event)">${showHint ? 'hide hint' : 'hint'}</button>
+        <button class="action-btn" onclick="toggleFlag(${q.id}, event)">${isFlagged ? 'unflag' : 'flag'}</button>
+        <button class="action-btn" onclick="toggleDone(${q.id}, event)">${isDone ? 'undo' : 'done'}</button>
+        <button class="action-btn" onclick="askClaude(${JSON.stringify(q.text)}, event)">explain ↗</button>
+      </div>
+    </div>
+    <div class="hint-box ${showHint ? 'visible' : ''}">${q.hint}</div>
+  `;
+}
+
+function render() {
+  const doneCount = state.done.size;
+  document.getElementById('done-count').textContent = doneCount;
+  document.getElementById('flag-count').textContent = state.flagged.size;
+  document.getElementById('pct').textContent = Math.round(doneCount / 60 * 100) + '%';
+  document.getElementById('progress').style.width = Math.round(doneCount / 60 * 100) + '%';
+
+  let visible = questions;
+  if (currentFilter === 'done') visible = questions.filter(q => state.done.has(q.id));
+  else if (currentFilter === 'flagged') visible = questions.filter(q => state.flagged.has(q.id));
+  else if (currentFilter !== 'all') visible = questions.filter(q => q.cat === currentFilter);
+
+  document.getElementById('total-count').textContent = visible.length;
+
+  const list = document.getElementById('questions-list');
+  if (!visible.length) { list.innerHTML = '<div class="empty">No questions in this view.</div>'; return; }
+  list.innerHTML = visible.map(q => `<div id="q-${q.id}"></div>`).join('');
+  visible.forEach(q => renderCard(q.id));
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shahid – System Design Practice</title>
+<style>
+:root {
+  --color-background-primary: #0f1117;
+  --color-background-secondary: #1e2130;
+  --color-background-tertiary: #2d3148;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #64748b;
+  --color-text-success: #4ade80;
+  --color-background-success: rgba(74, 222, 128, 0.1);
+  --color-text-warning: #fbbf24;
+  --color-background-warning: rgba(251, 191, 36, 0.1);
+  --color-text-danger: #f87171;
+  --color-background-danger: rgba(248, 113, 113, 0.1);
+  --color-text-info: #7dd3fc;
+  --color-background-info: rgba(125, 211, 252, 0.1);
+  --color-border-info: #0ea5e9;
+  --color-border-primary: #4f46e5;
+  --color-border-secondary: #334155;
+  --color-border-tertiary: #2d3148;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --font-sans: 'Segoe UI', system-ui, sans-serif;
+}
+
+body { 
+  background: var(--color-background-primary); 
+  color: var(--color-text-primary); 
+  font-family: var(--font-sans); 
+  margin: 0;
+  padding: 2rem 1.5rem;
+  min-height: 100vh;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+.container { max-width: 900px; margin: 0 auto; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+.filter-btn { 
+  padding: 6px 14px; 
+  border-radius: 20px; 
+  border: 1px solid var(--color-border-secondary); 
+  background: var(--color-background-secondary); 
+  color: var(--color-text-secondary); 
+  font-size: 13px; 
+  cursor: pointer; 
+  transition: all 0.15s; 
+}
+.filter-btn:hover { border-color: var(--color-text-info); color: var(--color-text-primary); }
+.filter-btn.active { background: var(--color-border-primary); border-color: var(--color-border-primary); color: #fff; }
+
+.progress-bar { height: 6px; background: var(--color-background-tertiary); border-radius: 20px; margin-bottom: 1.5rem; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #4f46e5, #7c3aed); border-radius: 20px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+.stats { display: flex; gap: 20px; margin-bottom: 1.5rem; }
+.stat { font-size: 13px; color: var(--color-text-secondary); }
+.stat span { font-weight: 600; color: var(--color-text-primary); margin-left: 4px; }
+
+.question-card { 
+  background: var(--color-background-secondary); 
+  border: 1px solid var(--color-border-tertiary); 
+  border-radius: var(--border-radius-lg); 
+  padding: 1.25rem; 
+  margin-bottom: 12px; 
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.question-card:hover { border-color: var(--color-border-secondary); transform: translateY(-2px); }
+.question-card.done { border-left: 4px solid var(--color-text-success); opacity: 0.8; }
+.question-card.flagged { border-left: 4px solid var(--color-text-warning); }
+
+.question-header { display: flex; align-items: flex-start; gap: 12px; }
+.q-num { font-size: 12px; color: var(--color-text-tertiary); min-width: 28px; font-weight: 600; }
+.q-text { font-size: 15px; color: var(--color-text-primary); line-height: 1.6; flex: 1; }
+
+.q-meta { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  margin-top: 12px; 
+  padding-top: 12px; 
+  border-top: 1px solid var(--color-border-tertiary); 
+}
+
+.badge { font-size: 10px; padding: 3px 10px; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+.badge-sys { background: rgba(79, 70, 229, 0.15); color: #a5b4fc; }
+.badge-api { background: rgba(14, 165, 233, 0.15); color: #7dd3fc; }
+.badge-db { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+.badge-micro { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+
+.diff { font-size: 11px; font-weight: 600; margin-left: auto; text-transform: capitalize; }
+.diff.hard { color: var(--color-text-danger); }
+.diff.medium { color: var(--color-text-warning); }
+.diff.easy { color: var(--color-text-success); }
+
+.actions { display: flex; gap: 8px; margin-left: 10px; }
+.action-btn { 
+  font-size: 11px; 
+  padding: 4px 10px; 
+  border-radius: 6px; 
+  border: 1px solid var(--color-border-tertiary); 
+  background: var(--color-background-tertiary); 
+  color: var(--color-text-secondary); 
+  cursor: pointer; 
+  transition: all 0.15s;
+}
+.action-btn:hover { background: var(--color-border-secondary); color: var(--color-text-primary); border-color: var(--color-text-info); }
+
+.empty { text-align: center; padding: 4rem; color: var(--color-text-tertiary); font-size: 15px; }
+
+.hint-box { 
+  display: none; 
+  margin-top: 12px; 
+  padding: 12px 16px; 
+  background: rgba(0,0,0,0.2); 
+  border-radius: var(--border-radius-md); 
+  font-size: 13px; 
+  color: var(--color-text-secondary); 
+  line-height: 1.6; 
+  border: 1px dashed var(--color-border-tertiary);
+}
+.hint-box.visible { display: block; animation: fadeIn 0.3s ease; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+
+h1 { font-size: 1.5rem; font-weight: 600; color: var(--color-text-primary); margin-bottom: 0.5rem; }
+.subtitle { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 2rem; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>System Design Practice</h1>
+  <p class="subtitle">50 high-impact questions for senior backend interviews</p>
+
+  <div class="filters" id="filters">
+    <button class="filter-btn active" onclick="setFilter('all')">All (50)</button>
+    <button class="filter-btn" onclick="setFilter('System Design')">System Design</button>
+    <button class="filter-btn" onclick="setFilter('Microservices')">Microservices</button>
+    <button class="filter-btn" onclick="setFilter('API')">API Optimization</button>
+    <button class="filter-btn" onclick="setFilter('DB Design')">DB Design</button>
+    <button class="filter-btn" onclick="setFilter('done')">Done</button>
+    <button class="filter-btn" onclick="setFilter('flagged')">Flagged</button>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+  <div class="stats">
+    <div class="stat">Questions: <span id="total-count">50</span></div>
+    <div class="stat">Completed: <span id="done-count">0</span></div>
+    <div class="stat">Flagged: <span id="flag-count">0</span></div>
+  </div>
+
+  <div id="questions-list"></div>
+</div>
+
+<script>
+const questions = [
+  { id:1, cat:'System Design', diff:'hard', text:'Design a URL shortening service like bit.ly. Handle 100M URLs and 10B redirects/month.', hint:'Think about ID generation (base62), read-heavy caching strategy, and geographic distribution.' },
+  { id:2, cat:'System Design', diff:'hard', text:'Design a distributed rate limiter that works across multiple servers with < 5ms overhead.', hint:'Consider token bucket vs sliding window log, Redis with Lua scripts, and local + global counters.' },
+  { id:3, cat:'System Design', diff:'hard', text:'Design a real-time collaborative document editor (like Google Docs).', hint:'Operational Transformation or CRDT for conflict resolution, WebSocket for real-time, versioning.' },
+  { id:4, cat:'System Design', diff:'medium', text:'Design a notification system that handles push, email, and SMS with guaranteed delivery.', hint:'Message queues, idempotency keys, retry with exponential backoff, dead letter queues.' },
+  { id:5, cat:'System Design', diff:'hard', text:'Design a global CDN with edge caching and cache invalidation.', hint:'Anycast routing, consistent hashing for edge nodes, TTL vs event-based invalidation.' },
+  { id:6, cat:'System Design', diff:'medium', text:'Design a leaderboard system for a game with 50M users that updates in real time.', hint:'Sorted sets in Redis (ZADD/ZRANK), eventual consistency for global boards, partitioned leaderboards.' },
+  { id:7, cat:'System Design', diff:'hard', text:'Design a distributed message queue system from scratch (like Kafka).', hint:'Log-structured storage, partitions/consumer groups, offset tracking, leader election.' },
+  { id:8, cat:'System Design', diff:'medium', text:'Design a search autocomplete system with sub-50ms latency.', hint:'Trie data structures, prefix caching, personalization layer, debounce on client side.' },
+  { id:9, cat:'System Design', diff:'medium', text:'Design a photo sharing platform like Instagram. Estimate storage for 500M users.', hint:'Object storage (S3), CDN for reads, async thumbnail generation, sharded user graph.' },
+  { id:10, cat:'System Design', diff:'easy', text:'Design a parking lot system with support for multiple vehicle types and payment.', hint:'OOP design — classes for lot, spot, vehicle; state machine for spot status; pricing strategies.' },
+  { id:11, cat:'System Design', diff:'hard', text:'Design a distributed cache with consistency guarantees. When do you prefer AP vs CP?', hint:'Redis Cluster vs Memcached, cache aside vs write-through, cache stampede prevention.' },
+  { id:12, cat:'System Design', diff:'medium', text:'Design a video streaming platform. How do you handle adaptive bitrate streaming?', hint:'HLS/DASH protocols, chunked video segments, manifest files, CDN delivery, encoding pipeline.' },
+  { id:13, cat:'System Design', diff:'easy', text:'Design a key-value store. What trade-offs exist between LSM trees and B-trees?', hint:'LSM optimizes writes (RocksDB), B-tree optimizes reads (InnoDB). Compaction, bloom filters.' },
+  { id:14, cat:'System Design', diff:'medium', text:'Design a ride-sharing matching system. How do you efficiently match riders to nearby drivers?', hint:'Geohashing or S2 cells for spatial indexing, WebSocket for real-time updates, matching algorithm.' },
+  { id:15, cat:'System Design', diff:'hard', text:'Design a distributed job scheduler like cron that can run at scale with no single point of failure.', hint:'Leader election (ZooKeeper/etcd), at-least-once vs at-most-once delivery, idempotent job design.' },
+
+  { id:16, cat:'Microservices', diff:'hard', text:'How do you implement distributed tracing across 20+ microservices? Which tools and standards would you use?', hint:'OpenTelemetry standard, Jaeger/Zipkin, trace context propagation, sampling strategies.' },
+  { id:17, cat:'Microservices', diff:'medium', text:'Explain the Saga pattern. When would you use choreography vs orchestration?', hint:'Choreography = event-driven (loose coupling), orchestration = central coordinator. Compensating txns.' },
+  { id:18, cat:'Microservices', diff:'hard', text:'How do you handle service discovery in a microservices architecture with auto-scaling?', hint:'Client-side (Eureka) vs server-side (AWS ALB) discovery, health checks, DNS-based discovery.' },
+  { id:19, cat:'Microservices', diff:'medium', text:'Design a circuit breaker implementation. What are the states and transition conditions?', hint:'Closed → Open (on failure threshold) → Half-Open (probe) → Closed/Open. Hystrix/Resilience4j.' },
+  { id:20, cat:'Microservices', diff:'medium', text:'How do you ensure data consistency across microservices without distributed transactions?', hint:'Outbox pattern, event sourcing, eventual consistency, idempotent consumers, 2PC trade-offs.' },
+  { id:21, cat:'Microservices', diff:'easy', text:'What is the strangler fig pattern and when would you use it to migrate a monolith?', hint:'Gradually route traffic from old monolith to new services by feature/domain until monolith is gone.' },
+  { id:22, cat:'Microservices', diff:'hard', text:'How do you implement backpressure in a microservices pipeline when a downstream service is slow?', hint:'Reactive streams, queue-based load leveling, dropping vs buffering, rate limiting upstream.' },
+  { id:23, cat:'Microservices', diff:'medium', text:'Design an API gateway for 15 microservices. What cross-cutting concerns should it handle?', hint:'Auth, rate limiting, routing, SSL termination, request aggregation, logging, circuit breaking.' },
+  { id:24, cat:'Microservices', diff:'medium', text:'How do you handle versioning in a microservices environment without breaking clients?', hint:'URI versioning, header versioning, consumer-driven contracts (Pact), backward compatibility rules.' },
+  { id:25, cat:'Microservices', diff:'hard', text:'What is event sourcing? Design an order management system using event sourcing.', hint:'Store events not state, replay to rebuild state, projections for read models, snapshots for perf.' },
+  { id:26, cat:'Microservices', diff:'medium', text:'How do you implement health checks and readiness/liveness probes properly?', hint:'Liveness = is the process alive? Readiness = can it serve traffic? Check DB, cache, downstream deps.' },
+  { id:27, cat:'Microservices', diff:'easy', text:'Explain the sidecar pattern and give three real-world use cases.', hint:'Envoy sidecar: service mesh, mTLS between services, observability, traffic management.' },
+  { id:28, cat:'Microservices', diff:'hard', text:'How would you handle a cascading failure in a microservices architecture?', hint:'Bulkhead pattern, circuit breakers, timeouts, fallbacks, load shedding, chaos engineering.' },
+
+  { id:29, cat:'API', diff:'medium', text:'Your REST API has p99 latency of 800ms. Walk through your systematic optimization approach.', hint:'Profile first: N+1 queries, missing indexes, serialization cost, network hops, payload size.' },
+  { id:30, cat:'API', diff:'medium', text:'When would you choose GraphQL over REST? What performance pitfalls does GraphQL introduce?', hint:'N+1 problem, DataLoader pattern, query depth limiting, persisted queries, cost analysis.' },
+  { id:31, cat:'API', diff:'hard', text:'Design a pagination strategy for an API with 100M records. Compare cursor vs offset pagination.', hint:'Offset breaks with inserts, cursor-based is stable. Keyset pagination for sorted data.' },
+  { id:32, cat:'API', diff:'medium', text:'How do you design an idempotent API? What HTTP methods are naturally idempotent?', hint:'GET/PUT/DELETE idempotent, POST is not. Idempotency keys, conditional requests (ETags).' },
+  { id:33, cat:'API', diff:'easy', text:'Explain HTTP caching headers: Cache-Control, ETag, Last-Modified, and Vary. How do they interact?', hint:'Cache-Control directs caches, ETags for conditional GET, Vary changes cache key by header.' },
+  { id:34, cat:'API', diff:'hard', text:'Design a bulk API endpoint that processes 10,000 records. How do you handle partial failures?', hint:'Async job + polling, webhook callback, partial success response with per-item status codes.' },
+  { id:35, cat:'API', diff:'medium', text:'How do you implement API versioning? Compare URI, query param, header, and content negotiation.', hint:'URI (/v1/) simple but pollutes URL; headers clean but harder to test; content-type most RESTful.' },
+  { id:36, cat:'API', diff:'medium', text:'What is the difference between authentication and authorization? Design a JWT + RBAC system.', hint:'AuthN = who are you, AuthZ = what can you do. JWT claims, role hierarchy, permission scopes.' },
+  { id:37, cat:'API', diff:'hard', text:'How do you optimize an API that calls 5 downstream services sequentially? Refactor to parallel.', hint:'Promise.all / CompletableFuture, fan-out pattern, timeout strategy, partial response handling.' },
+  { id:38, cat:'API', diff:'medium', text:'Design a webhook system. How do you guarantee delivery and handle retries?', hint:'At-least-once delivery, exponential backoff, HMAC signature validation, dead letter queue.' },
+  { id:39, cat:'API', diff:'easy', text:'Explain HTTP/2 multiplexing and how it affects API design compared to HTTP/1.1.', hint:'Multiple streams per connection, header compression (HPACK), server push, eliminates head-of-line blocking.' },
+  { id:40, cat:'API', diff:'hard', text:'Design a real-time API using WebSockets vs SSE vs Long Polling. When do you choose each?', hint:'SSE for server-push only, WebSocket for bidirectional, Long Polling fallback. Scalability of each.' },
+
+  { id:41, cat:'DB Design', diff:'hard', text:'Your PostgreSQL query takes 4 seconds on a 50M row table. Walk through your full optimization process.', hint:'EXPLAIN ANALYZE, index types (B-tree/GIN/partial), covering indexes, query rewrite, partitioning.' },
+  { id:42, cat:'DB Design', diff:'medium', text:'Design a schema for a multi-tenant SaaS application. Compare shared vs isolated approaches.', hint:'Row-level security (shared schema), separate schemas, separate DBs. Trade-offs: cost vs isolation.' },
+  { id:43, cat:'DB Design', diff:'hard', text:'When would you use database sharding? Design a sharding strategy for a 10TB user database.', hint:'Consistent hashing vs range-based, choosing shard key, cross-shard queries, resharding pain.' },
+  { id:44, cat:'DB Design', diff:'medium', text:'Explain MVCC and how it enables PostgreSQL to handle concurrent reads and writes without locking.', hint:'Multiple row versions, visibility rules, transaction IDs, vacuum process, isolation levels.' },
+  { id:45, cat:'DB Design', diff:'easy', text:'When would you choose a NoSQL database over a relational one? Give three concrete scenarios.', hint:'Document (MongoDB): flexible schema. Key-value (Redis): session store. Wide-column: time series data.' },
+  { id:46, cat:'DB Design', diff:'hard', text:'Design a time-series database schema for IoT sensor data from 1M devices generating 10 events/sec.', hint:'TimescaleDB hypertables, partitioning by time, compression, downsampling, retention policies.' },
+  { id:47, cat:'DB Design', diff:'medium', text:'Explain CAP theorem with concrete examples. Where do PostgreSQL, Cassandra, and MongoDB sit?', hint:'PostgreSQL = CP, Cassandra = AP (tunable), MongoDB = CP (with replica sets). Partition tolerance always.' },
+  { id:48, cat:'DB Design', diff:'medium', text:'Design an audit trail system that captures every change to critical tables with zero performance impact.', hint:'CDC (Change Data Capture), event triggers, write-ahead log tailing, separate audit DB.' },
+  { id:49, cat:'DB Design', diff:'hard', text:'How does database replication work? Compare synchronous vs asynchronous and when each is appropriate.', hint:'Sync = strong consistency + write latency. Async = high throughput + potential data loss. Semi-sync.' },
+  { id:50, cat:'DB Design', diff:'easy', text:'Design a schema for a social network. How do you efficiently store and query a follower graph?', hint:'Adjacency list for follows, graph DB for traversal, materialized follower counts, fan-out on write.' },
+];
+
+let state = JSON.parse(localStorage.getItem('sdq_state') || 'null') || { done: [], flagged: [], hints: [] };
+state.done = new Set(state.done);
+state.flagged = new Set(state.flagged);
+state.hints = new Set(state.hints);
+
+function saveState() {
+  localStorage.setItem('sdq_state', JSON.stringify({ done: [...state.done], flagged: [...state.flagged], hints: [...state.hints] }));
+}
+
+let currentFilter = 'all';
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach((b) => {
+    const text = b.textContent;
+    const isActive = (f === 'all' && text.startsWith('All')) || 
+                   (f === 'done' && text === 'Done') || 
+                   (f === 'flagged' && text === 'Flagged') || 
+                   (text === f);
+    b.classList.toggle('active', isActive);
+  });
+  render();
+}
+
+function toggleDone(id, e) {
+  e.stopPropagation();
+  if (state.done.has(id)) state.done.delete(id); else state.done.add(id);
+  saveState(); render();
+}
+
+function toggleFlag(id, e) {
+  e.stopPropagation();
+  if (state.flagged.has(id)) state.flagged.delete(id); else state.flagged.add(id);
+  saveState(); render();
+}
+
+function toggleHint(id, e) {
+  e.stopPropagation();
+  if (state.hints.has(id)) state.hints.delete(id); else state.hints.add(id);
+  saveState(); renderCard(id);
+}
+
+function askClaude(qText, e) {
+  e.stopPropagation();
+  if (typeof sendPrompt === 'function') {
+    sendPrompt(`Walk me through how to approach this system design question: "${qText}"`);
+  } else {
+    alert("Claude integration only available in the app environment.");
+  }
+}
+
+function catBadge(cat) {
+  if (cat === 'System Design') return 'badge-sys';
+  if (cat === 'API') return 'badge-api';
+  if (cat === 'DB Design') return 'badge-db';
+  return 'badge-micro';
+}
+
+function renderCard(id) {
+  const q = questions.find(x => x.id === id);
+  const el = document.getElementById('q-' + id);
+  if (!el) return;
+  const isDone = state.done.has(id);
+  const isFlagged = state.flagged.has(id);
+  const showHint = state.hints.has(id);
+  el.className = 'question-card' + (isDone ? ' done' : isFlagged ? ' flagged' : '');
+  el.innerHTML = `
+    <div class="question-header">
+      <div class="q-num">${q.id}.</div>
+      <div class="q-text">${q.text}</div>
+    </div>
+    <div class="q-meta">
+      <span class="badge ${catBadge(q.cat)}">${q.cat}</span>
+      <span class="diff ${q.diff}">${q.diff}</span>
+      <div class="actions">
+        <button class="action-btn" onclick="toggleHint(${q.id}, event)">${showHint ? 'Hide Hint' : 'Hint'}</button>
+        <button class="action-btn" onclick="toggleFlag(${q.id}, event)">${isFlagged ? 'Unflag' : 'Flag'}</button>
+        <button class="action-btn" onclick="toggleDone(${q.id}, event)">${isDone ? 'Undo' : 'Done'}</button>
+        <button class="action-btn" onclick="askClaude('${q.text.replace(/'/g, "\\'")}', event)">Ask ↗</button>
+      </div>
+    </div>
+    <div class="hint-box ${showHint ? 'visible' : ''}"><strong>💡 Hint:</strong> ${q.hint}</div>
+  `;
+}
+
+function render() {
+  const doneCount = state.done.size;
+  const flagCount = state.flagged.size;
+  document.getElementById('done-count').textContent = doneCount;
+  document.getElementById('flag-count').textContent = flagCount;
+  document.getElementById('progress').style.width = Math.round(doneCount / 50 * 100) + '%';
+
+  let visible = questions;
+  if (currentFilter === 'done') visible = questions.filter(q => state.done.has(q.id));
+  else if (currentFilter === 'flagged') visible = questions.filter(q => state.flagged.has(q.id));
+  else if (currentFilter !== 'all') visible = questions.filter(q => q.cat === currentFilter);
+
+  document.getElementById('total-count').textContent = visible.length;
+
+  const list = document.getElementById('questions-list');
+  if (visible.length === 0) { 
+    list.innerHTML = '<div class="empty">No questions found in this category.</div>'; 
+    return; 
+  }
+
+  list.innerHTML = visible.map(q => `<div class="question-card" id="q-${q.id}"></div>`).join('');
+  visible.forEach(q => renderCard(q.id));
+}
+
+render();
+</script>
+</body>
+</html>
